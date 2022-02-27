@@ -7,7 +7,6 @@ from django.core.validators import validate_email
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
 from django.views.generic import FormView, View
 from django.views.generic.detail import SingleObjectMixin
 
@@ -42,7 +41,7 @@ class SendInvite(FormView):
             return self.form_invalid(form)
         return self.render_to_response(
             self.get_context_data(
-                success_message=_('%(email)s has been invited') % {
+                success_message='%(email)s has been invited' % {
                     "email": email}))
 
     def form_invalid(self, form):
@@ -85,7 +84,7 @@ class SendJSONInvite(View):
                     response['invalid'].append(
                         {invitee: 'user registered email'})
                 else:
-                    invite.inviter = self.request.user
+                    invite.inviter = request.user
                     invite.save()
                     invite.send_invitation(request)
                     response['valid'].append({invitee: 'invited'})
@@ -200,3 +199,33 @@ def accept_invite_after_signup(sender, request, user, **kwargs):
 if app_settings.ACCEPT_INVITE_AFTER_SIGNUP:
     signed_up_signal = get_invitations_adapter().get_user_signed_up_signal()
     signed_up_signal.connect(accept_invite_after_signup)
+
+def send_bulk_invite(request, invite_list, is_employee=False):
+    response = {'valid': [], 'invalid': []}
+    if isinstance(invite_list, list):
+        for invitee in invite_list:
+            try:
+                validate_email(invitee)
+                CleanEmailMixin().validate_invitation(invitee)
+                invite = Invitation.create(invitee)
+            except(ValueError, KeyError):
+                pass
+            except(ValidationError):
+                response['invalid'].append({
+                    invitee: 'invalid email'})
+            except(AlreadyAccepted):
+                response['invalid'].append({
+                    invitee: 'already accepted'})
+            except(AlreadyInvited):
+                response['invalid'].append(
+                    {invitee: 'pending invite'})
+            except(UserRegisteredEmail):
+                response['invalid'].append(
+                    {invitee: 'user registered email'})
+            else:
+                invite.inviter = request.user
+                invite.is_employee = is_employee
+                invite.save()
+                invite.send_invitation(request)
+                response['valid'].append({invitee: 'invited'})
+    return response
