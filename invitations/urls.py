@@ -12,5 +12,4 @@ urlpatterns = [
 
     path('accept-invite/<slug:key>', views.AcceptInvite.as_view(),
         name='accept-invite'),
-    path('test/', views.test_view, name="test-view")
 ]
