@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext_lazy as _
 
 from .adapters import get_invitations_adapter
 from .exceptions import AlreadyAccepted, AlreadyInvited, UserRegisteredEmail
@@ -28,11 +27,11 @@ class CleanEmailMixin(object):
         email = get_invitations_adapter().clean_email(email)
 
         errors = {
-            "already_invited": _("This e-mail address has already been"
-                                 " invited."),
-            "already_accepted": _("This e-mail address has already"
-                                  " accepted an invite."),
-            "email_in_use": _("An active user is using this e-mail address"),
+            "already_invited": "This e-mail address has already been"
+                                 " invited.",
+            "already_accepted": "This e-mail address has already"
+                                  " accepted an invite.",
+            "email_in_use": "An active user is using this e-mail address",
         }
         try:
             self.validate_invitation(email)
@@ -48,7 +47,7 @@ class CleanEmailMixin(object):
 class InviteForm(forms.Form, CleanEmailMixin):
 
     email = forms.EmailField(
-        label=_("E-mail"),
+        label="E-mail",
         required=True,
         widget=forms.TextInput(
             attrs={"type": "email", "size": "30"}), initial="")
@@ -59,9 +58,10 @@ class InviteForm(forms.Form, CleanEmailMixin):
 
 class InvitationAdminAddForm(forms.ModelForm, CleanEmailMixin):
     email = forms.EmailField(
-        label=_("E-mail"),
+        label="E-mail",
         required=True,
-        widget=forms.TextInput(attrs={"type": "email", "size": "30"}))
+        widget=forms.TextInput(attrs={"type": "email", "size": "30"})
+    )
 
     def save(self, *args, **kwargs):
         cleaned_data = super(InvitationAdminAddForm, self).clean()

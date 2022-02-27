@@ -9,7 +9,6 @@ except ImportError:
 from django.db import models
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-from django.utils.translation import ugettext_lazy as _
 
 from . import signals
 from .adapters import get_invitations_adapter
@@ -18,10 +17,11 @@ from .base_invitation import AbstractBaseInvitation
 
 
 class Invitation(AbstractBaseInvitation):
-    email = models.EmailField(unique=True, verbose_name=_('e-mail address'),
+    email = models.EmailField(unique=True, verbose_name='e-mail address',
                               max_length=app_settings.EMAIL_MAX_LENGTH)
-    created = models.DateTimeField(verbose_name=_('created'),
+    created = models.DateTimeField(verbose_name='created',
                                    default=timezone.now)
+    is_employee = models.BooleanField(default=False)
 
     @classmethod
     def create(cls, email, inviter=None, **kwargs):

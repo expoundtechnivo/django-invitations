@@ -1,14 +1,13 @@
 from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from .managers import BaseInvitationManager
 
 
 class AbstractBaseInvitation(models.Model):
-    accepted = models.BooleanField(verbose_name=_('accepted'), default=False)
-    key = models.CharField(verbose_name=_('key'), max_length=64, unique=True)
-    sent = models.DateTimeField(verbose_name=_('sent'), null=True)
+    accepted = models.BooleanField(verbose_name='accepted', default=False)
+    key = models.CharField(verbose_name='key', max_length=64, unique=True)
+    sent = models.DateTimeField(verbose_name='sent', null=True)
     inviter = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)  # noqa
 
