@@ -66,7 +66,13 @@ class InvitationAdminAddForm(forms.ModelForm, CleanEmailMixin):
     def save(self, *args, **kwargs):
         cleaned_data = super(InvitationAdminAddForm, self).clean()
         email = cleaned_data.get("email")
-        params = {'email': email}
+        is_employee = cleaned_data.get("is_employee")
+        organisation_id = cleaned_data.get("organisation_id")
+        params = {
+            'email': email,
+            'is_employee': is_employee,
+            'organisation_id': organisation_id,
+        }
         if cleaned_data.get("inviter"):
             params['inviter'] = cleaned_data.get("inviter")
         instance = Invitation.create(**params)
@@ -76,7 +82,7 @@ class InvitationAdminAddForm(forms.ModelForm, CleanEmailMixin):
 
     class Meta:
         model = Invitation
-        fields = ("email", "inviter")
+        fields = ("email", "inviter", "is_employee", "organisation_id")
 
 
 class InvitationAdminChangeForm(forms.ModelForm):

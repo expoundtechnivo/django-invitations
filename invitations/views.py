@@ -200,7 +200,7 @@ if app_settings.ACCEPT_INVITE_AFTER_SIGNUP:
     signed_up_signal = get_invitations_adapter().get_user_signed_up_signal()
     signed_up_signal.connect(accept_invite_after_signup)
 
-def send_bulk_invite(request, invite_list, is_employee=False):
+def send_bulk_invite(request, invite_list, is_employee=True, organisation_id=None):
     response = {'valid': [], 'invalid': []}
     if isinstance(invite_list, list):
         for invitee in invite_list:
@@ -225,6 +225,7 @@ def send_bulk_invite(request, invite_list, is_employee=False):
             else:
                 invite.inviter = request.user
                 invite.is_employee = is_employee
+                invite.organisation_id = organisation_id
                 invite.save()
                 invite.send_invitation(request)
                 response['valid'].append({invitee: 'invited'})

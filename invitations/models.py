@@ -21,7 +21,8 @@ class Invitation(AbstractBaseInvitation):
                               max_length=app_settings.EMAIL_MAX_LENGTH)
     created = models.DateTimeField(verbose_name='created',
                                    default=timezone.now)
-    is_employee = models.BooleanField(default=False)
+    is_employee = models.BooleanField(default=True)
+    organisation_id = models.CharField(max_length=120, null=True, blank=True)
 
     @classmethod
     def create(cls, email, inviter=None, **kwargs):
