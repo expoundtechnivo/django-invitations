@@ -54,7 +54,7 @@ class Invitation(AbstractBaseInvitation):
             'inviter': self.inviter,
         })
 
-        email_template = 'frontend/support/email_templates/invite.html'
+        email_template = 'frontend/support/email_templates/invite'
 
         get_invitations_adapter().send_mail(
             email_template,
